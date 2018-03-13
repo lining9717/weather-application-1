@@ -14,6 +14,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -25,12 +28,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnClick(View view) {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String now_date = dateFormat.format(date);
+        ((TextView)findViewById(R.id.tv_date)).setText(now_date);
+        ((TextView)findViewById(R.id.tv_weekday)).setText(getWeekOfDate(date));
         new DownloadUpdate().execute();
     }
 
 
-    private class DownloadUpdate extends AsyncTask<String, Void, String> {
+    public String getWeekOfDate(Date date) {
+        String[] weekDays = { "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY" };
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        if (w < 0)
+            w = 0;
+        return weekDays[w];
+    }
 
+    private class DownloadUpdate extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... strings) {
@@ -82,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String temperature) {
+            temperature = temperature.replaceAll("\\s+", "");
             //Update the temperature displayed
             ((TextView) findViewById(R.id.temperature_of_the_day)).setText(temperature);
         }
