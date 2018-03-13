@@ -1,9 +1,13 @@
 package mg.studio.weatherappdesign;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -28,12 +32,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnClick(View view) {
-        Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        String now_date = dateFormat.format(date);
-        ((TextView)findViewById(R.id.tv_date)).setText(now_date);
-        ((TextView)findViewById(R.id.tv_weekday)).setText(getWeekOfDate(date));
-        new DownloadUpdate().execute();
+
     }
 
 
@@ -45,6 +44,35 @@ public class MainActivity extends AppCompatActivity {
         if (w < 0)
             w = 0;
         return weekDays[w];
+    }
+
+    public void refreshClick(View view) {
+        RotateAnimation  mFlipAnimation = new RotateAnimation(0, -360, RotateAnimation.RELATIVE_TO_SELF,
+                0.5f,RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mFlipAnimation.setInterpolator(new LinearInterpolator());
+        mFlipAnimation.setDuration(1000);
+        mFlipAnimation.setFillAfter(true);
+        findViewById(R.id.img_refresh).startAnimation(mFlipAnimation);
+
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String now_date = dateFormat.format(date);
+        ((TextView)findViewById(R.id.tv_date)).setText(now_date);
+        ((TextView)findViewById(R.id.tv_weekday)).setText(getWeekOfDate(date));
+        new DownloadUpdate().execute();
+    }
+
+    public void choose_day(View view) {
+        findViewById(R.id.first_day).setBackgroundColor(Color.WHITE);
+        findViewById(R.id.second_day).setBackgroundColor(Color.WHITE);
+        findViewById(R.id.third_day).setBackgroundColor(Color.WHITE);
+        findViewById(R.id.fourth_day).setBackgroundColor(Color.WHITE);
+        ((TextView)findViewById(R.id.first_day)).setTextColor(getResources().getColor(R.color.colorText));
+        ((TextView)findViewById(R.id.second_day)).setTextColor(getResources().getColor(R.color.colorText));
+        ((TextView)findViewById(R.id.third_day)).setTextColor(getResources().getColor(R.color.colorText));
+        ((TextView)findViewById(R.id.fourth_day)).setTextColor(getResources().getColor(R.color.colorText));
+        view.setBackground(getDrawable(R.drawable.select_background));
+        ((TextView)view).setTextColor(Color.WHITE);
     }
 
     private class DownloadUpdate extends AsyncTask<String, Void, String> {

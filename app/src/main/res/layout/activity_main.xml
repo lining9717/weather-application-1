@@ -84,7 +84,10 @@
                     android:id="@+id/img_weather_condition"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+                    android:layout_alignBottom="@+id/linearLayout"
                     android:layout_gravity="center"
+                    android:layout_toEndOf="@+id/linearLayout"
+                    android:layout_toRightOf="@+id/linearLayout"
                     app:srcCompat="@drawable/rainy_up" />
 
                 <TextView
@@ -102,8 +105,17 @@
                     android:layout_height="wrap_content"
                     android:text="03/03/2018"
                     android:textColor="@android:color/white" />
-
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/img_refresh"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/tv_temperature"
+                android:layout_toStartOf="@+id/tv_temperature"
+                android:onClick="refreshClick"
+                app:srcCompat="@drawable/refresh_icon" />
 
             <RelativeLayout
                 android:id="@+id/tv_temperature"
@@ -176,16 +188,16 @@
                 android:layout_height="48dp"
                 app:srcCompat="@drawable/rainy_small" />
 
-
-
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:id="@+id/first_day"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:gravity="center"
                 android:text="mon"
                 android:textAllCaps="true"
                 android:textColor="#909090"
-                android:background="#31a7dc"/>
+                android:onClick="choose_day"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -201,12 +213,16 @@
                 app:srcCompat="@drawable/partly_sunny_small" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/second_day"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:gravity="center"
                 android:text="tue"
                 android:textAllCaps="true"
-                android:textColor="#909090" />
+                android:textColor="#909090"
+
+                android:onClick="choose_day"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -222,12 +238,16 @@
                 app:srcCompat="@drawable/windy_small" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/third_day"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+
                 android:gravity="center"
-                android:text="thu"
+                android:text="wed"
                 android:textAllCaps="true"
-                android:textColor="#909090" />
+                android:textColor="#909090"
+                android:onClick="choose_day"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -243,12 +263,16 @@
                 app:srcCompat="@drawable/sunny_small" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/fourth_day"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:gravity="center"
-                android:text="fri"
+                android:text="thu"
                 android:textAllCaps="true"
-                android:textColor="#909090" />
+                android:textColor="#909090"
+
+                android:onClick="choose_day"
+                />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
