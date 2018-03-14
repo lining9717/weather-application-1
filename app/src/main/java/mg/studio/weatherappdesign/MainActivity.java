@@ -71,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.second_day)).setTextColor(getResources().getColor(R.color.colorText));
         ((TextView)findViewById(R.id.third_day)).setTextColor(getResources().getColor(R.color.colorText));
         ((TextView)findViewById(R.id.fourth_day)).setTextColor(getResources().getColor(R.color.colorText));
-        view.setBackground(getDrawable(R.drawable.select_background));
+        //view.setBackground(getDrawable(R.drawable.select_background));
+        view.setBackground(getResources().getDrawable(R.drawable.select_background));
         ((TextView)view).setTextColor(Color.WHITE);
     }
 
