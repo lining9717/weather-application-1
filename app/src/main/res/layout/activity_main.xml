@@ -189,16 +189,16 @@
                 app:srcCompat="@drawable/rainy_small" />
 
             <TextView
-                android:id="@+id/first_day"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:gravity="center"
-                android:text="mon"
-                android:textAllCaps="true"
-                android:textColor="#ffffff"
-                android:onClick="choose_day"
-                android:background="@drawable/select_background"
-                />
+            android:id="@+id/first_day"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="mon"
+            android:textAllCaps="true"
+            android:textColor="#ffffff"
+            android:onClick="choose_day"
+            android:background="@drawable/select_background"
+            />
         </LinearLayout>
 
         <LinearLayout
@@ -221,7 +221,6 @@
                 android:text="tue"
                 android:textAllCaps="true"
                 android:textColor="#909090"
-
                 android:onClick="choose_day"
                 />
         </LinearLayout>
@@ -242,7 +241,6 @@
                 android:id="@+id/third_day"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-
                 android:gravity="center"
                 android:text="wed"
                 android:textAllCaps="true"
@@ -271,7 +269,6 @@
                 android:text="thu"
                 android:textAllCaps="true"
                 android:textColor="#909090"
-
                 android:onClick="choose_day"
                 />
         </LinearLayout>
