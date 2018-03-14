@@ -195,8 +195,9 @@
                 android:gravity="center"
                 android:text="mon"
                 android:textAllCaps="true"
-                android:textColor="#909090"
+                android:textColor="#ffffff"
                 android:onClick="choose_day"
+                android:background="@drawable/select_background"
                 />
         </LinearLayout>
 
