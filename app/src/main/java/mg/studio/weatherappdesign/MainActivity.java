@@ -4,26 +4,39 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private Forecast[] forecast;
+    private int[] image = {R.drawable.sunny_small,R.drawable.windy_small,
+            R.drawable.rainy_small, R.drawable.partly_sunny_small};
+    public final static int SUNNY = 0;
+    public final static int WINDY = 1;
+    public final static int RAINY = 2;
+    public final static int CLOUDY = 3;
+    private final  static String location = "沙坪坝";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +59,29 @@ public class MainActivity extends AppCompatActivity {
         return weekDays[w];
     }
 
+    public String[] getNextFourDays(Date date){
+        String[] weekDays = { "SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT" };
+        String[] nextDays = new String[4];
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        if (w < 0)
+            w = 0;
+       for(int i=0;i<4;i++){
+           nextDays[i] = weekDays[(w+i+1)%7];
+       }
+        return nextDays;
+    }
+
+
     public void refreshClick(View view) {
+        forecast = new Forecast[5];
+        new DownloadUpdate().execute();
+        rotateRefesh();
+    }
+
+    //旋转refresh按钮
+    public void rotateRefesh(){
         RotateAnimation  mFlipAnimation = new RotateAnimation(0, -360, RotateAnimation.RELATIVE_TO_SELF,
                 0.5f,RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         mFlipAnimation.setInterpolator(new LinearInterpolator());
@@ -54,15 +89,46 @@ public class MainActivity extends AppCompatActivity {
         mFlipAnimation.setFillAfter(true);
         findViewById(R.id.img_refresh).startAnimation(mFlipAnimation);
 
-        Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        String now_date = dateFormat.format(date);
+    }
+
+    //获取日期及天气信息
+    public void setInfo(int i){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        calendar.add(Calendar.DAY_OF_YEAR, i);
+        Date date = calendar.getTime();
+        String now_date = sdf.format(date);
         ((TextView)findViewById(R.id.tv_date)).setText(now_date);
         ((TextView)findViewById(R.id.tv_weekday)).setText(getWeekOfDate(date));
-        new DownloadUpdate().execute();
+
+        int temperature = forecast[i].getTemperature();
+        Log.i("temperature","------------>"+temperature);
+
+        ((TextView)findViewById(R.id.temperature)).setText(temperature+"");
+        ((ImageView)findViewById(R.id.img_weather_condition)).setImageResource(image[forecast[i].getType()]);
     }
 
     public void choose_day(View view) {
+        init();
+        view.setBackground(getResources().getDrawable(R.drawable.select_background));
+        ((TextView)view).setTextColor(Color.WHITE);
+        if(view == findViewById(R.id.first_day)){
+            setInfo(1);
+        }
+        if(view == findViewById(R.id.second_day)){
+            setInfo(2);
+        }
+        if(view == findViewById(R.id.third_day)){
+            setInfo(3);
+        }
+        if(view == findViewById(R.id.fourth_day)){
+            setInfo(4);
+        }
+    }
+
+
+    public void init(){
+        ((TextView)findViewById(R.id.tv_location)).setText(location);
         findViewById(R.id.first_day).setBackgroundColor(Color.WHITE);
         findViewById(R.id.second_day).setBackgroundColor(Color.WHITE);
         findViewById(R.id.third_day).setBackgroundColor(Color.WHITE);
@@ -71,65 +137,59 @@ public class MainActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.second_day)).setTextColor(getResources().getColor(R.color.colorText));
         ((TextView)findViewById(R.id.third_day)).setTextColor(getResources().getColor(R.color.colorText));
         ((TextView)findViewById(R.id.fourth_day)).setTextColor(getResources().getColor(R.color.colorText));
-        view.setBackground(getResources().getDrawable(R.drawable.select_background));
-        ((TextView)view).setTextColor(Color.WHITE);
+        Date date = new Date();
+        String[] nextDays = getNextFourDays(date);
+        ((TextView)findViewById(R.id.first_day)).setText(nextDays[0]);
+        ((TextView)findViewById(R.id.second_day)).setText(nextDays[1]);
+        ((TextView)findViewById(R.id.third_day)).setText(nextDays[2]);
+        ((TextView)findViewById(R.id.fourth_day)).setText(nextDays[3]);
+        ((ImageView)findViewById(R.id.icon_first)).setImageResource(image[forecast[1].getType()]);
+        ((ImageView)findViewById(R.id.icon_second)).setImageResource(image[forecast[2].getType()]);
+        ((ImageView)findViewById(R.id.icon_third)).setImageResource(image[forecast[3].getType()]);
+        ((ImageView)findViewById(R.id.icon_fourth)).setImageResource(image[forecast[4].getType()]);
+        setInfo(0);
     }
 
     private class DownloadUpdate extends AsyncTask<String, Void, String> {
-
         @Override
         protected String doInBackground(String... strings) {
-            String stringUrl = "http://mpianatra.com/Courses/info.txt";
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader;
-
+            String result = null;
             try {
-                URL url = new URL(stringUrl);
-
-                // Create the request to get the information from the server, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Mainly needed for debugging
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                //The temperature
-                return buffer.toString();
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+                //参数url化
+                String city = null;
+                city = java.net.URLEncoder.encode(location, "utf-8");
+                //拼地址
+                String apiUrl = String.format("https://www.sojson.com/open/api/weather/json.shtml?city=%s",city);
+                //开始请求
+                URL url= new URL(apiUrl);
+                URLConnection open = url.openConnection();
+                InputStream input = open.getInputStream();
+                result = IOUtils.toString(input,"utf-8");
+                //输出
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            return null;
+            return result;
         }
 
         @Override
-        protected void onPostExecute(String temperature) {
-            temperature = temperature.replaceAll("\\s+", "");
-            //Update the temperature displayed
-            ((TextView) findViewById(R.id.temperature_of_the_day)).setText(temperature);
+        protected void onPostExecute(String json) {
+            if(json == null){
+                Toast.makeText(MainActivity.this,"No infomation",Toast.LENGTH_SHORT).show();
+                return;
+            }
+            try {
+                JSONObject obj = new JSONObject(json);
+                JSONObject data = obj.getJSONObject("data");
+                JSONArray array = data.getJSONArray("forecast");
+                for(int i=0;i<array.length();i++){
+                    JSONObject temp = array.getJSONObject(i);
+                    forecast[i] = new Forecast(temp.getString("low"),temp.getString("high"),temp.getString("type"));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            init();
         }
     }
 }

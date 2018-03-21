@@ -127,7 +127,7 @@
 
 
                 <TextView
-                    android:id="@+id/temperature_of_the_day"
+                    android:id="@+id/temperature"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="right"
@@ -139,8 +139,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignRight="@id/temperature_of_the_day"
-                    android:layout_alignTop="@id/temperature_of_the_day"
+                    android:layout_alignRight="@id/temperature"
+                    android:layout_alignTop="@id/temperature"
                     android:gravity="right"
                     android:text="°C"
                     android:textColor="@android:color/white"
@@ -184,6 +184,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/icon_first"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 app:srcCompat="@drawable/rainy_small" />
@@ -195,9 +196,8 @@
             android:gravity="center"
             android:text="mon"
             android:textAllCaps="true"
-            android:textColor="#ffffff"
+            android:textColor="#909090"
             android:onClick="choose_day"
-            android:background="@drawable/select_background"
             />
         </LinearLayout>
 
@@ -209,6 +209,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/icon_second"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 app:srcCompat="@drawable/partly_sunny_small" />
@@ -233,6 +234,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/icon_third"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 app:srcCompat="@drawable/windy_small" />
@@ -257,6 +259,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/icon_fourth"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 app:srcCompat="@drawable/sunny_small" />
