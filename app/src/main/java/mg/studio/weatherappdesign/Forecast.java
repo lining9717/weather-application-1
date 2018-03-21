@@ -19,16 +19,10 @@ public class Forecast {
     private String mhighest_Temperature;
     private String mType;
 
-
-
     public Forecast(String mlowest_Temperature, String mhighest_Temperature, String mType) {
         this.mlowest_Temperature = mlowest_Temperature;
         this.mhighest_Temperature = mhighest_Temperature;
         this.mType = mType;
-        Log.i("lt","------------>"+mlowest_Temperature);
-        Log.i("ht","------------>"+mhighest_Temperature);
-        Log.i("type","----------->"+mType);
-
     }
 
     public int getTemperature(){

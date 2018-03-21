@@ -155,17 +155,13 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             String result = null;
             try {
-                //参数url化
                 String city = null;
                 city = java.net.URLEncoder.encode(location, "utf-8");
-                //拼地址
                 String apiUrl = String.format("https://www.sojson.com/open/api/weather/json.shtml?city=%s",city);
-                //开始请求
                 URL url= new URL(apiUrl);
                 URLConnection open = url.openConnection();
                 InputStream input = open.getInputStream();
                 result = IOUtils.toString(input,"utf-8");
-                //输出
             } catch (Exception e) {
                 e.printStackTrace();
             }
